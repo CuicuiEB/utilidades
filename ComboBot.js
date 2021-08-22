@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ComboBot
 // @namespace    http://tampermonkey.net/
-// @version      1.1.15
+// @version      1.1.16
 // @description  Combina el BOT de cuervos y farmeo
 // @author       Cuicui
 // @match        https://marketplace.plantvsundead.com/*
@@ -16,15 +16,6 @@
 
 (function () {
     'use strict';
-
-    var count=0;
-
-    var strr="";
-    strr=window.location.href;
-    console.log(strr.indexOf("#"));
-
-    if(window.location.href != "https://marketplace.plantvsundead.com/farm/#/farm/")
-    {
 
     // Load remote JS
     GM_xmlhttpRequest({
@@ -57,11 +48,13 @@
         close: true
     })
 
-    var maxWater = 75,
+    var maxWater = 80,
         checkloop = true,
         checkloopgagak = true,
         prevPage = 0,
         backgroundElement;
+
+    console.log("Cargando...")
 
     var interval = setInterval(() => {
         var loadingGif = document.getElementsByClassName("loading-page");
@@ -73,9 +66,8 @@
                 if (loadingGif.length === 0) {
                     if (capthaDialog.length === 0) {
                         var curPage = document.getElementsByClassName("currentPage tw-mr-2")[0];
-                        if (typeof (curPage) !== 'undefined'){
+                        if (typeof (curPage) !== 'undefined')
                             curPage = curPage.innerText;
-                        }
 
                         var maxPage = document.getElementsByClassName("text tw-mr-2")[1];
                         if (typeof (maxPage) !== 'undefined') {
@@ -99,23 +91,15 @@
 
                         var waterParent = document.getElementsByClassName("tw-absolute tool-icon");
                         for (let i = 0; i < waterParent.length; i++) {
-                            if (waterParent[i].src === "https://marketplace.plantvsundead.com/_nuxt/img/water@3x.d5ca50d.png") {
-
-                                waterParent[i].parentNode.style.background ="#000000";
-                                waterParent[i].parentElement.children[1].src ="";
-                                waterParent[i].parentElement.children[2].style.color ="#ffffff";
-                                waterParent[i].parentElement.children[2].style.fontWeight = "1000";
-                                waterParent[i].parentElement.children[2].style.fontSize = "x-large";
-                                waterParent[i].parentElement.children[2].innerText=waterParent[i].parentElement.children[2].innerText;
-
+                            if (waterParent[i].src === "https://marketplace.plantvsundead.com/_nuxt/img/water@3x.d5ca50d.png") {                                
                                 if (waterParent[i].parentElement.children[2].innerText < maxWater) {
-                                    console.log(validCount + "-" + waterParent[i].parentElement.children[2].innerText);
-                                    //dryWaterToast.showToast();
+
+                                    console.log("Page: " + curPage + "-" + i + "-" + waterParent[i].parentElement.children[2].innerText)
+
                                     kebonValidCount++;
                                     validCount++;
                                     backgroundElement = waterParent[i].parentNode.parentNode.parentNode.parentNode.parentNode;
-                                    waterParent[i].parentNode.parentNode.parentNode.parentNode.parentNode.style.backgroundColor = "lightblue";
-                                waterParent[i].parentNode.style.background ="red";
+                                    waterParent[i].parentNode.parentNode.parentNode.parentNode.parentNode.style.backgroundColor = "red";
                                     if (checkloop) {
                                         waterParent[i].parentNode.parentNode.parentNode.parentNode.parentNode.scrollIntoView({
                                             block: 'end',
@@ -126,13 +110,14 @@
                                 }
                             }
                         }
+
                         let a = document.querySelectorAll('.crow-icon')
                         for (let index = 0; index < a.length; index++) {
                             let b = a[index];
                             if (b.getAttribute('style') == "") {
                                 gagakValidCount++;
                                 validCount++;
-                                b.parentElement.parentElement.parentElement.style.backgroundColor = "pink";
+                                b.parentElement.parentElement.parentElement.style.backgroundColor = "red";
                                 if (checkloopgagak) {
                                     b.parentElement.parentElement.parentElement.scrollIntoView({
                                         block: 'end',
@@ -142,6 +127,9 @@
                                 }
                             }
                         }
+
+                        console.log("Current Page: " + (typeof (curPage) === 'undefined' ? 1 : curPage))
+                        console.log("Total Page: " + (typeof (maxPage) === 'undefined' ? 1 : maxPage))
                         if (curPage == maxPage) {
                             if (kebonValidCount > 0) {
                                 //dryWaterToast.showToast();
@@ -152,7 +140,7 @@
                                 console.log("Cuervo a la vista!");
                             }
                             lastPageToast.showToast();
-                            console.log("TERMINO LA PAGINA");
+                            console.log("Es la ultima pagina :(");
                             clearInterval(interval);
                         } else if (validCount === 0) {
                             if (capthaDialog.length === 0) {
@@ -164,7 +152,7 @@
                             }
                         } else {
                             if (kebonValidCount > 0)
-                                //dryWaterToast.showToast();
+                                dryWaterToast.showToast();
                             if (gagakValidCount > 0)
                                 crowToast.showToast();
                         }
@@ -172,5 +160,5 @@
                 }
             }
         }
-    }, 1500);
-}})();
+    }, 2000);
+})();
